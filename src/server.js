@@ -18,7 +18,8 @@ app.use(
         colorize: true,
         translateTime: 'HH:MM:ss',
         ignore: 'pid,hostname',
-        messageFormat: '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
+        messageFormat:
+          '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
         hideObject: true,
       },
     },
@@ -27,6 +28,11 @@ app.use(
 
 app.get('/notes', (req, res) => {
   res.status(200).json({ message: 'Retrieved all notes' });
+});
+
+app.get('/notes/:noteId', (req, res) => {
+  const { noteId } = req.params;
+  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
 });
 
 app.listen(PORT, () => {
