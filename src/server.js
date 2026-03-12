@@ -1,31 +1,17 @@
 import express from 'express';
-import pino from 'pino-http';
 import cors from 'cors';
 import 'dotenv/config';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { Note } from './models/notes.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger } from './middleware/logger.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use(
-  pino({
-    level: 'info',
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss',
-        ignore: 'pid,hostname',
-        messageFormat:
-          '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
-        hideObject: true,
-      },
-    },
-  }),
-);
+app.use(logger);
 
 app.get('/notes', async (req, res) => {
   const notes = await Note.find();
@@ -49,15 +35,7 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  const isProd = process.env.NODE_ENV === 'production';
-  res.status(500).json({
-    message: isProd
-      ? 'Something went wrong. Please try again later.'
-      : err.message,
-  });
-});
+app.use(errorHandler);
 
 await connectMongoDB();
 
