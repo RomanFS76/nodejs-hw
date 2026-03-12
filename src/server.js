@@ -51,8 +51,11 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
+  const isProd = process.env.NODE_ENV === 'production';
   res.status(500).json({
-    message: err.message,
+    message: isProd
+      ? 'Something went wrong. Please try again later.'
+      : err.message,
   });
 });
 
