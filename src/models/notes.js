@@ -13,7 +13,7 @@ const notesSchema = new Schema(
       trim: true,
     },
     tag: {
-      type: Number,
+      type: String,
       enum: [
         'Work',
         'Personal',
