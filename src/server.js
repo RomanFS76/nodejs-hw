@@ -32,9 +32,13 @@ app.get('/notes', async (req, res) => {
   res.status(200).json(notes);
 });
 
-app.get('/notes/:noteId', (req, res) => {
+app.get('/notes/:noteId', async (req, res) => {
   const { noteId } = req.params;
-  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
+  const note = await Note.findById(noteId);
+  if (!note) {
+    return res.status(404).json({ message: 'Note not found' });
+  }
+  res.status(200).json(note);
 });
 
 app.get('/test-error', () => {
