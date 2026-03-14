@@ -30,3 +30,14 @@ export const deleteNote = async (req, res) => {
   }
   res.status(200).json(note);
 };
+
+export const updateNote = async (req, res) => {
+  const { noteId } = req.params;
+  const note = await Note.findOneAndDelete({ _id: noteId }, req.body, {
+    new: true,
+  });
+  if (!note) {
+    throw createHttpError(404, 'Student not found');
+  }
+  res.status(200).json(note);
+};
