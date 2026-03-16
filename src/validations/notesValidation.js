@@ -52,6 +52,6 @@ export const getAllNotesSchema = {
     tag: Joi.string()
       .valid(...TAGS)
       .optional(),
-      search: Joi.string().trim().allow('').optional(),
+    search: Joi.string().trim().allow('').optional(),
   }),
 };
