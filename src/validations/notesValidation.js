@@ -31,3 +31,16 @@ export const createNoteSchema = {
       }),
   }),
 };
+
+export const updateNoteSchema = {
+  [Segments.PARAMS]: Joi.object({
+    studentId: Joi.string().custom(objectIdValidator).required(),
+  }),
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().trim().min(1).optional(),
+    content: Joi.string().trim().allow('').optional(),
+    tag: Joi.string()
+      .valid(...TAGS)
+      .optional(),
+  }).min(1),
+};
