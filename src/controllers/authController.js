@@ -11,9 +11,9 @@ export const registerUser = async (req, res) => {
     throw createHttpError(400, 'Email in use');
   }
 
-  const hashesPassword = await bcrypt.hash (password, 10);
+  const hashedPassword = await bcrypt.hash (password, 10);
 
-  const newUser = await User.create({ email, password: hashesPassword });
+  const newUser = await User.create({ email, password: hashedPassword });
 
   res.status(201).json({newUser});
 };
