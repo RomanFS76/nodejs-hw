@@ -46,7 +46,7 @@ export const deleteNote = async (req, res) => {
   console.log(noteId);
   console.log(req.user._id);
   const note = await Note.findOneAndDelete({
-    id: noteId,
+    _id: noteId,
     userId: req.user._id,
   });
   if (!note) {
@@ -57,7 +57,7 @@ export const deleteNote = async (req, res) => {
 
 export const updateNote = async (req, res) => {
   const { noteId } = req.params;
-  const note = await Note.findByIdAndUpdate({ _id: noteId, userId: req.user._id }, req.body, {
+  const note = await Note.findOneAndUpdate({ _id: noteId, userId: req.user._id }, req.body, {
     returnDocument: 'after',
   });
   if (!note) {
