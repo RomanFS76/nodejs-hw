@@ -1,33 +1,36 @@
-// src/server.js
 import express from 'express';
-import pino from 'pino-http';
 import cors from 'cors';
 import 'dotenv/config';
+import { connectMongoDB } from './db/connectMongoDB.js';
+
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import notesRoutes from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import { errors } from 'celebrate';
+import cookieParser from 'cookie-parser';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use(
-  pino({
-    level: 'info',
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss',
-        ignore: 'pid,hostname',
-        messageFormat: '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
-        hideObject: true,
-      },
-    },
-  }),
-);
+app.use(logger);
+app.use(cookieParser());
 
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello RR!' });
-});
+app.use(notesRoutes);
+app.use(authRoutes);
+app.use(userRoutes);
+
+app.use(notFoundHandler);
+
+app.use(errors());
+
+app.use(errorHandler);
+
+await connectMongoDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
